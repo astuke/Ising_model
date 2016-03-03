@@ -40,6 +40,7 @@ function ising()
     
     toc;
     [couplings,J]=CreateCouplingTables(L,p);
+    [M,Ms,spins]=DoAnnealing(p,L);
     figure;
     PlotCouplingTables(couplings,J,L);
     PlotSpins(spins,L);
