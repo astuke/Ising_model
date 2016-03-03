@@ -39,7 +39,8 @@ function ising()
     hold off;
     
     toc;
-    
+    [couplings,J]=CreateCouplingTables(L,p);
+    figure;
     PlotCouplingTables(couplings,J,L);
     PlotSpins(spins,L);
         
