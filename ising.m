@@ -2,23 +2,25 @@ function ising()
     
     tic;
     
-    L=8;
-    p=linspace(0.0,1.0,20);
+    L=8; %length of the lattice
+    p=linspace(0.0,1.0,20); %probability that the coupling constant J is -1 for a nearest neighbour pair,
+                            % see function J=RandomCoupling(p) below
     
     NTimes=100;
     
-    M=zeros(NTimes,length(p));
-    Ms=zeros(NTimes,length(p));
+    M=zeros(NTimes,length(p)); % Magnetization
+    Ms=zeros(NTimes,length(p)); % Staggered Magnetization
 
+    %Calculate the expectation value of M and Ms as a function of p
     parfor k=1:length(p)
         
         [M(:,k),Ms(:,k)]=AnnealMultipleTimes(p(k),L,NTimes)
         
     end
     
-    m=mean(M);
-    ms=mean(Ms);
-    ErrM=std(M)/sqrt(NTimes);
+    m=mean(M); %expectation value of M
+    ms=mean(Ms); %expectation value of Ms
+    ErrM=std(M)/sqrt(NTimes); %error estimate of expectation value (std: standard deviation)
     ErrMs=std(Ms)/sqrt(NTimes);
     
     figure;
@@ -43,8 +45,9 @@ function ising()
         
 end
 
-function [M,Ms]=AnnealMultipleTimes(p,L,NTimes)
-
+%This function calculates the ground state N times for different realizations of the coupling constants, 
+%obtaining the value of M and Ms for each ground state
+function [M,Ms]=AnnealMultipleTimes(p,L,NTimes) 
     M=zeros(NTimes,1);
     Ms=zeros(NTimes,1);
 
@@ -54,17 +57,19 @@ function [M,Ms]=AnnealMultipleTimes(p,L,NTimes)
 
 end
 
+%This is the simulated annealing procedure to calculate the ground state of the system.  
 function [M,Ms,spins]=DoAnnealing(p,L)
     
     [couplings,J]=CreateCouplingTables(L,p);
     
     NUpdates=1000;
     
-    T=linspace(2.0,0.2,NUpdates);
-    beta=1./T; 
+    T=linspace(2.0,0.2,NUpdates); %temperature
+    beta=1./T; %inverse temperature
     
     spins=randi([0,1],1,L*L)*2-1;
     
+    %Start running the Monte Carlo algorithm (UpdateSweep) at a high temperature and then cool down
     for k=1:NUpdates
         spins=UpdateSweep(beta(k),spins,couplings,J);
     end
@@ -94,6 +99,7 @@ function M=magnetization(spins,L)
     
 end
 
+%Monte Carlo algorithm: Spin flip is accepted with certain probability
 function spins=UpdateSweep(beta,spins,couplings,J)
 
     N=length(spins);
@@ -101,10 +107,11 @@ function spins=UpdateSweep(beta,spins,couplings,J)
     for k=1:length(spins)
         site=randi([1,N]);
         %propose to flip the chosen spin
-        DeltaE=2*spins(site)*sum(spins(couplings(site,:)).*J(site,:));
+        DeltaE=2*spins(site)*sum(spins(couplings(site,:)).*J(site,:)); % energy change of system by flipping spin
         
+        %accept spin flip with probabilty
         if DeltaE<0 || rand()<exp(-beta*DeltaE)
-            spins(site)=-spins(site);
+            spins(site)=-spins(site); %update spin
         end
             
     end
@@ -248,13 +255,14 @@ function xnew=WrapAdd(x,dx,L)
 
 end
 
-%Randomly choose the coupling J to be +-1 based on the probability p.
+%Randomly choose the coupling J to be +-1 based on the probability p. 
 function J=RandomCoupling(p)
     
     if rand()<p
-        J=-1;
+        J=-1; %negative coupling: neighbouring soins antiparallel
     else
-        J=1;
+        J=1; %positive coupling: neighbouring spins parallel. For example, if p=0, it is J=1 for all nearest neighbour pairs,
+             %so that all spins on the lattice are aligned (all up or all down). This is the completely magnetized ground state.
     end
 
 end
