@@ -1,4 +1,4 @@
-function hw5()
+function ising()
     
     tic;
     
@@ -61,8 +61,7 @@ function [M,Ms,spins]=DoAnnealing(p,L)
     NUpdates=1000;
     
     T=linspace(2.0,0.2,NUpdates);
-    beta=1./T;
-    %beta=ones(1,NUpdates)*10;
+    beta=1./T; 
     
     spins=randi([0,1],1,L*L)*2-1;
     
@@ -135,7 +134,7 @@ function PlotSpins(spins,L)
 
 end
 
-%This funcntion plots the coupling tables crated by CreateCouplingTables.
+%This funcntion plots the coupling tables created by CreateCouplingTables.
 function PlotCouplingTables(couplings,J,L)
 
     hold on;
@@ -159,11 +158,7 @@ function PlotCouplingTables(couplings,J,L)
             
         end
          
-        %This plots also the "up" and "left" directions. These are the
-        %same as the down and right ones, since e.g. the coupling from
-        %site [x,y] to [x+1,y] is the same as the one from site [x+1,y]
-        %to [x,y]. This is thus useful only for checking that
-        %CreateCouplingTables works properly.
+        %This plots also the "up" and "left" directions. 
         for l=3:4
            
            [xn,yn]=ExpandIndex(couplings(k,l),L);
