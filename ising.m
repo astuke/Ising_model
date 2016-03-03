@@ -134,7 +134,7 @@ function PlotSpins(spins,L)
 
 end
 
-%This funcntion plots the coupling tables created by CreateCouplingTables.
+%This function plots the coupling tables created by CreateCouplingTables.
 function PlotCouplingTables(couplings,J,L)
 
     hold on;
